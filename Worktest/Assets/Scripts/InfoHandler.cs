@@ -4,18 +4,25 @@ using UnityEngine;
 
 public class InfoHandler : MonoBehaviour
 {
-    TournamentInfo info;
-    void Start()
+    [SerializeField] GameObject tournamentInfoPrefab;
+    [SerializeField] Transform infoContainer;
+
+    [SerializeField] GameObject infoUI;
+    
+    public void Request()
     {
-        StartCoroutine(ServerCommunication.Instance.RequestCoroutine<TournamentInfo>(LoadInfo,LoadFailed));
-        
+        StartCoroutine(ServerCommunication.Instance.RequestCoroutine<TournamentInfo>(LoadInfo,LoadFailed));       
 
     }
 
     public void LoadInfo(TournamentInfo info)
     {
-        this.info = info;
-        Debug.Log("");
+        
+        foreach(TournamentData data in info.data)
+        {
+            Instantiate(tournamentInfoPrefab, infoContainer).GetComponent<InfoField>().SetInfo(data.id,data.attributes.createdAt);
+        }        
+        infoUI.SetActive(true);
     }
 
     public void LoadFailed(string error)
